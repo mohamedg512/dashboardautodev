@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="assets/logo-transparent.png" type="image/png">
+  <link rel="apple-touch-icon" href="assets/logo-transparent.png">
+  <title>AutoDev Agency — Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<!-- ========== LOGIN ========== -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo">
+      <img src="assets/logo-transparent.png" alt="AutoDev" onerror="this.style.display='none'">
+      <h1>Auto<span>Dev</span></h1>
+      <p data-i18n="login_subtitle">لوحة تحكم AutoDev Agency</p>
+    </div>
+    <div class="login-error" id="loginError"></div>
+    <form class="login-form" id="loginForm">
+      <div class="form-group">
+        <label data-i18n="login_email">البريد الإلكتروني</label>
+        <input class="form-control" type="email" id="loginEmail" value="" required autocomplete="username">
+      </div>
+      <div class="form-group">
+        <label data-i18n="login_password">كلمة المرور</label>
+        <input class="form-control" type="password" id="loginPassword" value="" required autocomplete="current-password">
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%;padding:12px" data-i18n="login_btn">دخول</button>
+    </form>
+    <div class="login-demo">
+      <strong>دخول الموظفين</strong>
+      <span>يجب إنشاء الحساب في Supabase Auth وربط البريد نفسه بموظف نشط في قسم الفريق.</span>
+    </div>
+    <div class="login-lang">
+      <button type="button" data-lang="ar" class="active"><span class="flag-circle login-flag"><svg viewBox="0 0 30 20" preserveAspectRatio="xMidYMid slice"><rect width="15" height="20" fill="#006233"/><rect x="15" width="15" height="20" fill="#fff"/><circle cx="16.5" cy="10" r="4" fill="#d21034"/><circle cx="17.5" cy="10" r="3.2" fill="#fff"/><polygon fill="#d21034" points="19.3,7.8 20,9.6 21.9,9.6 20.4,10.7 20.9,12.5 19.3,11.4 17.7,12.5 18.2,10.7 16.7,9.6 18.6,9.6"/></svg></span> العربية</button>
+      <button type="button" data-lang="en"><span class="flag-circle login-flag"><svg viewBox="0 0 60 30" preserveAspectRatio="xMidYMid slice"><rect width="60" height="30" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" stroke-width="2"/><path d="M30,0 V30 M0,15 H60" stroke="#fff" stroke-width="10"/><path d="M30,0 V30 M0,15 H60" stroke="#C8102E" stroke-width="6"/></svg></span> English</button>
+      <button type="button" data-lang="fr"><span class="flag-circle login-flag"><svg viewBox="0 0 30 20" preserveAspectRatio="xMidYMid slice"><rect width="10" height="20" fill="#002395"/><rect x="10" width="10" height="20" fill="#fff"/><rect x="20" width="10" height="20" fill="#ed2939"/></svg></span> Français</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== APP ========== -->
+<div class="app" id="appRoot">
+  <div class="sidebar-overlay"></div>
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <img src="assets/logo-transparent.png" alt="AutoDev" onerror="this.style.display='none'">
+      <div>
+        <div class="brand-name">Auto<span>Dev</span></div>
+        <div class="brand-sub">Admin Panel</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <div class="nav-section-title" data-i18n="nav_section_main">الرئيسية</div>
+        <a href="#" class="nav-item active" data-view="overview">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          <span data-i18n="nav_overview">نظرة عامة</span>
+        </a>
+      </div>
+      <div class="nav-section">
+        <div class="nav-section-title" data-i18n="nav_section_business">إدارة الأعمال</div>
+        <a href="#" class="nav-item" data-view="requests">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+          <span data-i18n="nav_requests">الطلبات</span>
+          <span class="badge" id="badgeRequests" style="display:none">0</span>
+        </a>
+        <a href="#" class="nav-item" data-view="clients">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+          <span data-i18n="nav_clients">العملاء</span>
+        </a>
+        <a href="#" class="nav-item" data-view="projects">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+          <span data-i18n="nav_projects">المشاريع</span>
+        </a>
+        <a href="#" class="nav-item" data-view="tasks">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+          <span data-i18n="nav_tasks">المهام</span>
+        </a>
+        <a href="#" class="nav-item" data-view="messages">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          <span data-i18n="nav_messages">الرسائل</span>
+          <span class="badge" id="badgeMessages" style="display:none">0</span>
+        </a>
+      </div>
+      <div class="nav-section">
+        <div class="nav-section-title" data-i18n="nav_section_partner">الشراكات والتسويق</div>
+        <a href="#" class="nav-item" data-view="partners">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+          <span data-i18n="nav_partners">الشركاء</span>
+        </a>
+        <a href="#" class="nav-item" data-view="contracts">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M9 15l2 2 4-4"/></svg>
+          <span data-i18n="nav_contracts">العقود</span>
+        </a>
+        <a href="#" class="nav-item" data-view="automations">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/><circle cx="12" cy="12" r="4"/></svg>
+          <span data-i18n="nav_automations">الأتمتة</span>
+        </a>
+        <a href="#" class="nav-item" data-view="ads">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          <span data-i18n="nav_ads">الإعلانات</span>
+        </a>
+      </div>
+      <div class="nav-section">
+        <div class="nav-section-title" data-i18n="nav_section_content">المحتوى والنظام</div>
+        <a href="#" class="nav-item" data-view="services">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+          <span data-i18n="nav_services">الخدمات</span>
+        </a>
+        <a href="#" class="nav-item" data-view="sitecontent">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+          <span data-i18n="nav_sitecontent">محتوى الموقع</span>
+        </a>
+        <a href="#" class="nav-item" data-view="portfolioprojects">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+          <span data-i18n="nav_portfolioprojects">مشاريع البورتفوليو</span>
+        </a>
+        <a href="#" class="nav-item" data-view="homeprojects">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><path d="M9 22V12h6v10"/></svg>
+          <span data-i18n="nav_homeprojects">مشاريع الموقع</span>
+        </a>
+        <a href="#" class="nav-item" data-view="testimonials">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          <span data-i18n="nav_testimonials">آراء العملاء</span>
+        </a>
+        <a href="#" class="nav-item" data-view="blog">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+          <span data-i18n="nav_blog">المدونة</span>
+        </a>
+        <a href="#" class="nav-item" data-view="faq">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
+          <span data-i18n="nav_faq">الأسئلة الشائعة</span>
+        </a>
+        <a href="#" class="nav-item" data-view="invoices">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+          <span data-i18n="nav_invoices">الفواتير</span>
+        </a>
+        <a href="#" class="nav-item" data-view="permissions">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span data-i18n="nav_permissions">الصلاحيات</span>
+        </a>
+        <a href="#" class="nav-item" data-view="team">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+          <span data-i18n="nav_team">الموظفون</span>
+        </a>
+        <a href="#" class="nav-item" data-view="settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          <span data-i18n="nav_settings">الإعدادات</span>
+        </a>
+      </div>
+    </nav>
+    <button type="button" class="sidebar-logout" id="sidebarLogout">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+      <span data-i18n="logout">تسجيل الخروج</span>
+    </button>
+    <div class="sidebar-footer">AutoDev Agency · v2.0</div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="menu-toggle" id="menuToggle"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg></button>
+        <h1 class="page-title" id="pageTitle" data-i18n="page_overview">نظرة عامة</h1>
+      </div>
+      <div class="topbar-right">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          <input type="search" data-i18n-placeholder="search" placeholder="بحث...">
+        </div>
+        <button class="icon-btn" id="themeToggle" title="Theme" aria-label="Theme">
+          <span class="theme-icon theme-icon-moon" id="iconMoon" title="Dark">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+          </span>
+          <span class="theme-icon theme-icon-sun" id="iconSun" title="Light" style="display:none">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          </span>
+        </button>
+        <button class="icon-btn lang-btn" id="langToggle" title="Language" aria-label="Language">
+          <span class="flag-icon flag-circle" id="flagIcon"><svg viewBox="0 0 30 20" preserveAspectRatio="xMidYMid slice"><rect width="15" height="20" fill="#006233"/><rect x="15" width="15" height="20" fill="#fff"/><circle cx="16.5" cy="10" r="4" fill="#d21034"/><circle cx="17.5" cy="10" r="3.2" fill="#fff"/><polygon fill="#d21034" points="19.3,7.8 20,9.6 21.9,9.6 20.4,10.7 20.9,12.5 19.3,11.4 17.7,12.5 18.2,10.7 16.7,9.6 18.6,9.6"/></svg></span>
+        </button>
+        <div class="notif-wrap" style="position:relative">
+        <button class="icon-btn" id="notifBtn" title="Notifications">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
+          <span class="dot" id="notifDot" style="display:none"></span>
+        </button>
+        <div class="notif-panel" id="notifPanel" style="display:none;position:absolute;top:calc(100% + 8px);inset-inline-end:0;width:320px;max-height:400px;overflow:auto;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow);z-index:90">
+          <div style="padding:10px 12px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+            <strong data-i18n="notifications" style="font-size:.85rem">الإشعارات</strong>
+            <span class="text-muted" style="font-size:.75rem" id="notifCount">0</span>
+          </div>
+          <div id="notifList" style="padding:6px"></div>
+        </div>
+        </div>
+        <div class="user-menu" id="userMenu">
+          <div class="user-chip" id="userMenuBtn">
+            <div class="user-avatar">AD</div>
+            <span class="user-name" data-i18n="admin">المدير</span>
+          </div>
+          <div class="user-menu-drop">
+            <button type="button" onclick="navigate('settings')">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2"/></svg>
+              <span data-i18n="nav_settings">الإعدادات</span>
+            </button>
+            <button type="button" class="danger" id="logoutBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+              <span data-i18n="logout">تسجيل الخروج</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="content">
+      <!-- OVERVIEW -->
+      <section class="view active" id="view-overview">
+        <div class="stats-grid six">
+          <div class="stat-card"><div class="stat-icon cyan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/></svg></div>
+            <div class="stat-label" data-i18n="stat_new_requests">طلبات جديدة</div>
+            <div class="stat-value" id="statNewRequests">—</div>
+            <div class="stat-meta" id="statTotalRequests">—</div>
+          </div>
+          <div class="stat-card"><div class="stat-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+            <div class="stat-label" data-i18n="stat_active_clients">عملاء نشطون</div>
+            <div class="stat-value" id="statActiveClients">—</div>
+            <div class="stat-meta" id="statTotalClients">—</div>
+          </div>
+          <div class="stat-card"><div class="stat-icon orange"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg></div>
+            <div class="stat-label" data-i18n="stat_projects">المشاريع</div>
+            <div class="stat-value" id="statProjects">—</div>
+            <div class="stat-meta" id="statVisibleProjects">—</div>
+          </div>
+          <div class="stat-card"><div class="stat-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
+            <div class="stat-label" data-i18n="stat_revenue">إجمالي الإيرادات</div>
+            <div class="stat-value" id="statRevenue" style="font-size:1.3rem">—</div>
+          </div>
+          <div class="stat-card"><div class="stat-icon yellow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
+            <div class="stat-label" data-i18n="stat_tasks">مهام مفتوحة</div>
+            <div class="stat-value" id="statOpenTasks">—</div>
+          </div>
+          <div class="stat-card"><div class="stat-icon red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+            <div class="stat-label" data-i18n="stat_messages">رسائل غير مقروءة</div>
+            <div class="stat-value" id="statUnread">—</div>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title" data-i18n="requests_chart">توزيع الطلبات</div></div>
+            <div class="panel-body"><div class="chart-container"><canvas id="requestsChart"></canvas></div></div>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title" data-i18n="ad_budget">ميزانية الإعلانات</div></div>
+            <div class="panel-body">
+              <div class="flex-between mb-2">
+                <div><div class="text-muted" style="font-size:.85rem" data-i18n="spent">المصروف</div><div class="stat-value" style="font-size:1.35rem" id="statAdSpent">—</div></div>
+                <div style="text-align:end"><div class="text-muted" style="font-size:.85rem" data-i18n="budget">الميزانية</div><div id="statAdBudget" class="text-sec">—</div></div>
+              </div>
+              <div class="progress-bar" style="height:10px;margin-bottom:8px"><div class="fill" id="adProgressFill" style="width:0%"></div></div>
+              <div class="flex-between"><span class="text-muted" style="font-size:.8rem">%</span><span id="adProgressText" class="text-cyan" style="font-weight:700">0%</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title" data-i18n="recent_requests">أحدث الطلبات</div>
+              <button class="btn btn-sm btn-outline" onclick="navigate('requests')" data-i18n="view_all">عرض الكل</button>
+            </div>
+            <div class="panel-body no-pad"><div class="table-wrap"><table>
+              <thead><tr><th data-i18n="client">العميل</th><th data-i18n="service">الخدمة</th><th data-i18n="status">الحالة</th><th data-i18n="date">التاريخ</th><th></th></tr></thead>
+              <tbody id="recentRequestsBody"></tbody>
+            </table></div></div>
+          </div>
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title" data-i18n="recent_messages">أحدث الرسائل</div>
+              <button class="btn btn-sm btn-outline" onclick="navigate('messages')" data-i18n="view_all">عرض الكل</button>
+            </div>
+            <div class="panel-body no-pad"><div class="table-wrap"><table>
+              <thead><tr><th data-i18n="sender">المرسل</th><th data-i18n="subject">الموضوع</th><th data-i18n="status">الحالة</th><th data-i18n="date">التاريخ</th></tr></thead>
+              <tbody id="recentMessagesBody"></tbody>
+            </table></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- REQUESTS -->
+      <section class="view" id="view-requests">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title" data-i18n="page_requests">الطلبات</div>
+            <div class="toolbar">
+              <input type="search" class="form-control" id="reqSearch" data-i18n-placeholder="search" placeholder="بحث...">
+              <select class="form-control" id="reqFilterStatus">
+                <option value="all" data-i18n="all">الكل</option>
+                <option value="new">جديد</option><option value="contacted">تم التواصل</option>
+                <option value="quoted">عرض سعر</option><option value="won">تم الاتفاق</option><option value="lost">خسارة</option>
+              </select>
+              <button class="btn btn-primary btn-sm" onclick="editRequest(null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> <span data-i18n="add_request">إضافة طلب</span></button>
+            </div>
+          </div>
+          <div class="panel-body no-pad"><div class="table-wrap"><table>
+            <thead><tr>
+              <th data-i18n="client">العميل</th><th data-i18n="email">التواصل</th><th data-i18n="service">الخدمة</th>
+              <th data-i18n="status">الحالة</th><th data-i18n="priority">الأولوية</th><th data-i18n="date">التاريخ</th>
+              <th data-i18n="description">الوصف</th><th data-i18n="actions">إجراءات</th>
+            </tr></thead>
+            <tbody id="requestsTableBody"></tbody>
+          </table></div></div>
+        </div>
+      </section>
+
+      <!-- CLIENTS -->
+      <section class="view" id="view-clients">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title" data-i18n="page_clients">العملاء</div>
+            <div class="toolbar">
+              <input type="search" class="form-control" id="cliSearch" data-i18n-placeholder="search" placeholder="بحث...">
+              <button class="btn btn-primary btn-sm" onclick="editClient(null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> <span data-i18n="add_client">إضافة عميل</span></button>
+            </div>
+          </div>
+          <div class="panel-body no-pad"><div class="table-wrap"><table>
+            <thead><tr>
+              <th data-i18n="client">العميل</th><th data-i18n="email">التواصل</th><th data-i18n="industry">القطاع</th>
+              <th data-i18n="status">الحالة</th><th data-i18n="total_projects">المشاريع</th><th data-i18n="total_revenue">الإيرادات</th><th data-i18n="actions">إجراءات</th>
+            </tr></thead>
+            <tbody id="clientsTableBody"></tbody>
+          </table></div></div>
+        </div>
+      </section>
+
+      <!-- PROJECTS -->
+      <section class="view" id="view-projects">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title" data-i18n="page_projects">المشاريع</div>
+            <div class="toolbar">
+              <input type="search" class="form-control" id="projSearch" data-i18n-placeholder="search" placeholder="بحث...">
+              <button class="btn btn-primary btn-sm" onclick="editProject(null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> <span data-i18n="add_project">إضافة مشروع</span></button>
+            </div>
+          </div>
+          <div class="panel-body no-pad"><div class="table-wrap"><table>
+            <thead><tr>
+              <th data-i18n="title">المشروع</th><th data-i18n="categories">الفئات</th><th data-i18n="client">العميل</th>
+              <th data-i18n="status">الحالة</th><th data-i18n="visible">الظهور</th><th data-i18n="technologies">التقنيات</th>
+              <th data-i18n="likes">إعجابات</th><th data-i18n="actions">إجراءات</th>
+            </tr></thead>
+            <tbody id="projectsTableBody"></tbody>
+          </table></div></div>
+        </div>
+      </section>
+
+      <!-- TASKS -->
+      <section class="view" id="view-tasks">
+        <div class="flex-between mb-3">
+          <div class="panel-title" data-i18n="page_tasks">المهام</div>
+          <button class="btn btn-primary btn-sm" onclick="editTask(null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> <span data-i18n="add_task">إضافة مهمة</span></button>
+        </div>
+        <div class="kanban">
+          <div class="kanban-col">
+            <div class="kanban-col-header"><span data-i18n="todo">للتنفيذ</span><span class="badge badge-todo" id="countTodo">0</span></div>
+            <div class="kanban-col-body" id="kanbanTodo"></div>
+          </div>
+          <div class="kanban-col">
+            <div class="kanban-col-header"><span data-i18n="doing">قيد التنفيذ</span><span class="badge badge-doing" id="countDoing">0</span></div>
+            <div class="kanban-col-body" id="kanbanDoing"></div>
+          </div>
+          <div class="kanban-col">
+            <div class="kanban-col-header"><span data-i18n="done">منجزة</span><span class="badge badge-done" id="countDone">0</span></div>
+            <div class="kanban-col-body" id="kanbanDone"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PARTNERS -->
+      <section class="view" id="view-partners">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title" data-i18n="page_partners">الشركاء</div>
+            <button class="btn btn-primary btn-sm" onclick="editPartner(null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> <span data-i18n="add_partner">إضافة شريك</span></button>
+          </div>
+          <div class="panel-body no-pad"><div class="table-wrap"><table>
+            <thead><tr><th data-i18n="name">الشريك</th><th data-i18n="type">النوع</th><th data-i18n="email">التواصل</th><th data-i18n="status">الحالة</th><th data-i18n="date">البدء</th><th data-i18n="actions">إجراءات</th></tr></thead>
+            <tbody id="partnersTableBody"></tbody>
+          </table></div></div>
+        </div>
+      </section>
+
+      <!-- CONTRACTS -->
+      <section class="view" id="view-contracts">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title" data-i18n="page_contracts">العقود</div>
+            <div class="toolbar">
+              <select class="form-control" id="ctrFilterParty">
+                <option value="all" data-i18n="all">الكل</option>
+                <option value="partner" data-i18n="party_partner">شريك</option>
+                <option value="employee" data-i18n="party_employee">موظف</option>
+              </select>
+              <button class="btn btn-primary btn-sm" onclick="editContract(null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> <span data-i18n="add_contract">إضافة عقد</span></button>
+            </div>
+          </div>
+          <div class="panel-body no-pad"><div class="table-wrap"><table>
+            <thead><tr>
+              <th data-i18n="title">العنوان</th>
+              <th data-i18n="party_type">الطرف</th>
+              <th data-i18n="type">النوع</th>
+              <th data-i18n="date">المدة</th>
+              <th data-i18n="value">القيمة</th>
+              <th data-i18n="status">الحالة</th>
+              <th data-i18n="actions">إجراءات</th>
+            </tr></thead>
+            <tbody id="contractsTableBody"></tbody>
+          </table></div></div>
+        </div>
+      </section>
+
+      <section class="view" id="view-automations">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title" data-i18n="page_automations">الأتمتة</div>
+            <button class="btn btn-primary btn-sm" onclick="editAutomation(null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> <span data-i18n="add">إضافة</span></button>
+          </div>
+          <div class="panel-body no-pad"><div class="table-wrap"><table>
+            <thead><tr>
+              <th data-i18n="automation_name">الاسم</th>
+              <th data-i18n="trigger">المحفّز</th>
+              <th data-i18n="action">الإجراء</th>
+              <th data-i18n="status">الحالة</th>
+              <th data-i18n="actions">إجراءات</th>
+            </tr></thead>
+            <tbody id="automationsTableBody"></tbody>
+          </table></div></div>
+        </div>
+        <div class="panel mt-3">
+          <div class="panel-header"><div class="panel-title">ℹ️</div></div>
+          <div class="panel-body text-sec" style="font-size:.9rem;line-height:1.8">
+            <p><strong data-i18n="nav_automations">الأتمتة</strong></p>
+            <ul style="padding-inline-start:20px;margin-top:8px">
+              <li>contract_expiring → إنشاء مهمة قبل انتهاء العقد</li>
+              <li>employee_added → مهمة إعداد عقد عمل</li>
+              <li>request_new → مهمة متابعة الطلب</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ADS -->
+      <section class="view" id="view-ads">
+        <div class="stats-grid" style="margin-bottom:18px">
+          <div class="stat-card"><div class="stat-label" data-i18n="budget">الميزانية</div><div class="stat-value" style="font-size:1.25rem" id="adsTotalBudget">—</div></div>
+          <div class="stat-card"><div class="stat-label" data-i18n="spent">المصروف</div><div class="stat-value" style="font-size:1.25rem" id="adsTotalSpent">—</div></div>
+          <div class="stat-card"><div class="stat-label" data-i18n="remaining">المتبقي</div><div class="stat-value" style="font-size:1.25rem;color:var(--success)" id="adsRemaining">—</div></div>
+          <div class="stat-card"><div class="stat-label" data-i18n="conversions">التحويلات</div><div class="stat-value" style="font-size:1.25rem" id="adsTotalConv">—</div></div>
+        </div>
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title" data-i18n="page_ads">الإعلانات</div>
+            <button class="btn btn-primary btn-sm" onclick="editAd(null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> <span data-i18n="add_ad">إضافة حملة</span></button>
+          </div>
+          <div class="panel-body no-pad"><div class="table-wrap"><table>
+            <thead><tr>
+              <th data-i18n="campaign">الحملة</th><th data-i18n="platform">المنصة</th><th data-i18n="status">الحالة</th>
+              <th data-i18n="budget">الميزانية</th><th data-i18n="spent">المصروف</th>
+              <th data-i18n="impressions">الظهور</th><th data-i18n="clicks">نقرات</th><th data-i18n="conversions">تحويلات</th><th data-i18n="actions">إجراءات</th>
+            </tr></thead>
+            <tbody id="adsTableBody"></tbody>
+          </table></div></div>
+        </div>
+      </section>
+
+      <!-- MESSAGES -->
+      <section class="view" id="view-messages">
+        <div class="panel">
+          <div class="panel-header"><div class="panel-title" data-i18n="page_messages">الرسائل</div></div>
+          <div class="panel-body no-pad"><div class="table-wrap"><table>
+            <thead><tr>
+              <th data-i18n="sender">المرسل</th><th data-i18n="subject">الموضوع</th><th data-i18n="message">الرسالة</th>
+              <th data-i18n="status">الحالة</th><th data-i18n="date">التاريخ</th><th data-i18n="actions">إجراءات</th>
+            </tr></thead>
+            <tbody id="messagesTableBody"></tbody>
+          </table></div></div>
+        </div>
+      </section>
+
+      <!-- SERVICES -->
+      <section class="view" id="view-services">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title" data-i18n="page_services">الخدمات</div>
+            <button class="btn btn-primary btn-sm" onclick="editService(null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> <span data-i18n="add_service">إضافة خدمة</span></button>
+          </div>
+          <div class="panel-body no-pad"><div class="table-wrap"><table>
+            <thead><tr><th data-i18n="title">الخدمة</th><th data-i18n="description">الوصف</th><th data-i18n="visible">الظهور</th><th data-i18n="sort_order">الترتيب</th><th data-i18n="actions">إجراءات</th></tr></thead>
+            <tbody id="servicesTableBody"></tbody>
+          </table></div></div>
+        </div>
+      </section>
+
+      <!-- TEAM -->
+      <section class="view" id="view-team">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title" data-i18n="page_team">الفريق</div>
+            <button class="btn btn-primary btn-sm" onclick="editMember(null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> <span data-i18n="add_member">إضافة عضو</span></button>
+          </div>
+          <div class="panel-body no-pad"><div class="table-wrap"><table>
+            <thead><tr><th data-i18n="member">الموظف</th><th data-i18n="role">الدور</th><th data-i18n="department">القسم</th><th data-i18n="email">التواصل</th><th data-i18n="status">الحالة</th><th data-i18n="date">الانضمام</th><th data-i18n="actions">إجراءات</th></tr></thead>
+            <tbody id="teamTableBody"></tbody>
+          </table></div></div>
+        </div>
+      </section>
+
+      <!-- SETTINGS -->
+      
+      <section class="view" id="view-sitecontent">
+        <div class="settings-tabs" id="cmsTabs">
+          <button class="active" data-tab="cms-hero" onclick="showCmsTab('cms-hero')" data-i18n="cms_hero">البطل</button>
+          <button data-tab="cms-about" onclick="showCmsTab('cms-about')" data-i18n="cms_about">من نحن</button>
+          <button data-tab="cms-legal" onclick="showCmsTab('cms-legal')" data-i18n="cms_legal">قانوني</button>
+        </div>
+        <div class="settings-panel active" id="cms-hero">
+          <div class="panel"><div class="panel-header"><div class="panel-title" data-i18n="cms_hero">قسم البطل</div></div>
+          <div class="panel-body">
+            <div class="form-grid full">
+              <div class="form-group"><label>العنوان (AR)</label><textarea class="form-control" id="cms_hero_title_ar" rows="2"></textarea></div>
+              <div class="form-group"><label>Title (FR)</label><textarea class="form-control" id="cms_hero_title_fr" rows="2"></textarea></div>
+              <div class="form-group"><label>Title (EN)</label><textarea class="form-control" id="cms_hero_title_en" rows="2"></textarea></div>
+              <div class="form-group"><label>الوصف (AR)</label><textarea class="form-control" id="cms_hero_sub_ar" rows="2"></textarea></div>
+              <div class="form-group"><label>Sous-titre (FR)</label><textarea class="form-control" id="cms_hero_sub_fr" rows="2"></textarea></div>
+              <div class="form-group"><label>Subtitle (EN)</label><textarea class="form-control" id="cms_hero_sub_en" rows="2"></textarea></div>
+            </div>
+            <div class="mt-3"><button class="btn btn-primary" onclick="saveSiteContent()" data-i18n="save">حفظ</button></div>
+          </div></div>
+        </div>
+        <div class="settings-panel" id="cms-about">
+          <div class="panel"><div class="panel-header"><div class="panel-title" data-i18n="cms_about">من نحن</div></div>
+          <div class="panel-body">
+            <div class="form-grid">
+              <div class="form-group"><label>العنوان AR</label><input class="form-control" id="cms_about_title_ar"></div>
+              <div class="form-group"><label>Titre FR</label><input class="form-control" id="cms_about_title_fr"></div>
+              <div class="form-group"><label>Title EN</label><input class="form-control" id="cms_about_title_en"></div>
+              <div class="form-group full"><label>الوصف AR</label><textarea class="form-control" id="cms_about_desc_ar" rows="3"></textarea></div>
+              <div class="form-group full"><label>Description FR</label><textarea class="form-control" id="cms_about_desc_fr" rows="3"></textarea></div>
+              <div class="form-group full"><label>Description EN</label><textarea class="form-control" id="cms_about_desc_en" rows="3"></textarea></div>
+              <div class="form-group"><label>صندوق 1 عنوان AR</label><input class="form-control" id="cms_b1t_ar"></div>
+              <div class="form-group"><label>صندوق 1 وصف AR</label><input class="form-control" id="cms_b1d_ar"></div>
+              <div class="form-group"><label>صندوق 2 عنوان AR</label><input class="form-control" id="cms_b2t_ar"></div>
+              <div class="form-group"><label>صندوق 2 وصف AR</label><input class="form-control" id="cms_b2d_ar"></div>
+              <div class="form-group"><label>صندوق 3 عنوان AR</label><input class="form-control" id="cms_b3t_ar"></div>
+              <div class="form-group"><label>صندوق 3 وصف AR</label><input class="form-control" id="cms_b3d_ar"></div>
+              <div class="form-group"><label>صندوق 4 عنوان AR</label><input class="form-control" id="cms_b4t_ar"></div>
+              <div class="form-group"><label>صندوق 4 وصف AR</label><input class="form-control" id="cms_b4d_ar"></div>
+            </div>
+            <div class="mt-3"><button class="btn btn-primary" onclick="saveSiteContent()" data-i18n="save">حفظ</button></div>
+          </div></div>
+        </div>
+        <div class="settings-panel" id="cms-legal">
+          <div class="panel"><div class="panel-header"><div class="panel-title" data-i18n="cms_legal">الشروط والخصوصية</div></div>
+          <div class="panel-body">
+            <div class="form-grid full">
+              <div class="form-group"><label>الشروط (AR)</label><textarea class="form-control" id="cms_terms_ar" rows="6"></textarea></div>
+              <div class="form-group"><label>Conditions (FR)</label><textarea class="form-control" id="cms_terms_fr" rows="6"></textarea></div>
+              <div class="form-group"><label>Terms (EN)</label><textarea class="form-control" id="cms_terms_en" rows="6"></textarea></div>
+              <div class="form-group"><label>الخصوصية (AR)</label><textarea class="form-control" id="cms_privacy_ar" rows="6"></textarea></div>
+              <div class="form-group"><label>Confidentialité (FR)</label><textarea class="form-control" id="cms_privacy_fr" rows="6"></textarea></div>
+              <div class="form-group"><label>Privacy (EN)</label><textarea class="form-control" id="cms_privacy_en" rows="6"></textarea></div>
+              <div class="form-group"><label>الكوكيز (AR)</label><textarea class="form-control" id="cms_cookies_ar" rows="4"></textarea></div>
+              <div class="form-group"><label>Cookies (FR)</label><textarea class="form-control" id="cms_cookies_fr" rows="4"></textarea></div>
+              <div class="form-group"><label>Cookies (EN)</label><textarea class="form-control" id="cms_cookies_en" rows="4"></textarea></div>
+            </div>
+            <div class="mt-3"><button class="btn btn-primary" onclick="saveSiteContent()" data-i18n="save">حفظ</button></div>
+          </div></div>
+        </div>
+      </section>
+
+      <section class="view" id="view-portfolioprojects">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title" data-i18n="nav_portfolioprojects">مشاريع البورتفوليو</div>
+            <button class="btn btn-primary btn-sm" onclick="editPortfolioProject(null)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> <span data-i18n="add">إضافة</span></button>
+          </div>
+          <div class="panel-body no-pad"><div class="table-wrap"><table>
+            <thead><tr>
+              <th data-i18n="title">العنوان</th>
+              <th>AR / FR / EN</th>
+              <th data-i18n="type">التصنيف</th>
+              <th data-i18n="year">السنة</th>
+              <th data-i18n="status">الظهور</th>
+              <th data-i18n="actions">إجراءات</th>
+            </tr></thead>
+            <tbody id="portfolioProjectsBody"></tbody>
+          </table></div></div>
+        </div>
+      </section>
+
+      
+      <section class="view" id="view-homeprojects">
+        <div class="panel"><div class="panel-header">
+          <div class="panel-title" data-i18n="page_homeprojects">مشاريع الصفحة الرئيسية</div>
+          <button class="btn btn-primary btn-sm" onclick="editHomeProject(null)">+ <span data-i18n="add">إضافة</span></button>
+        </div>
+        <div class="panel-body no-pad"><div class="table-wrap"><table>
+          <thead><tr><th></th><th data-i18n="title">العنوان</th><th data-i18n="type">التصنيف</th><th data-i18n="status">الظهور</th><th data-i18n="actions">إجراءات</th></tr></thead>
+          <tbody id="homeProjectsBody"></tbody>
+        </table></div></div></div>
+      </section>
+
+      <section class="view" id="view-testimonials">
+        <div class="panel"><div class="panel-header">
+          <div class="panel-title" data-i18n="page_testimonials">آراء العملاء</div>
+          <button class="btn btn-primary btn-sm" onclick="editTestimonial(null)">+ <span data-i18n="add">إضافة</span></button>
+        </div>
+        <div class="panel-body no-pad"><div class="table-wrap"><table>
+          <thead><tr><th data-i18n="name">الاسم</th><th data-i18n="title">المحتوى</th><th>★</th><th data-i18n="status">الظهور</th><th data-i18n="actions">إجراءات</th></tr></thead>
+          <tbody id="testimonialsBody"></tbody>
+        </table></div></div></div>
+      </section>
+
+      <section class="view" id="view-blog">
+        <div class="panel"><div class="panel-header">
+          <div class="panel-title" data-i18n="page_blog">المدونة</div>
+          <button class="btn btn-primary btn-sm" onclick="editBlogPost(null)">+ <span data-i18n="add">إضافة</span></button>
+        </div>
+        <div class="panel-body no-pad"><div class="table-wrap"><table>
+          <thead><tr><th data-i18n="title">العنوان</th><th data-i18n="status">الحالة</th><th data-i18n="date">التاريخ</th><th data-i18n="actions">إجراءات</th></tr></thead>
+          <tbody id="blogBody"></tbody>
+        </table></div></div></div>
+      </section>
+
+      <section class="view" id="view-faq">
+        <div class="panel"><div class="panel-header">
+          <div class="panel-title" data-i18n="page_faq">الأسئلة الشائعة</div>
+          <button class="btn btn-primary btn-sm" onclick="editFaq(null)">+ <span data-i18n="add">إضافة</span></button>
+        </div>
+        <div class="panel-body no-pad"><div class="table-wrap"><table>
+          <thead><tr><th data-i18n="title">السؤال</th><th data-i18n="status">الظهور</th><th data-i18n="actions">إجراءات</th></tr></thead>
+          <tbody id="faqBody"></tbody>
+        </table></div></div></div>
+      </section>
+
+      <section class="view" id="view-invoices">
+        <div class="panel"><div class="panel-header">
+          <div class="panel-title" data-i18n="page_invoices">الفواتير وعروض الأسعار</div>
+          <div class="toolbar">
+            <button class="btn btn-outline btn-sm" onclick="createInvoice('quote')"><span data-i18n="generate_quote">عرض سعر</span></button>
+            <button class="btn btn-primary btn-sm" onclick="createInvoice('invoice')"><span data-i18n="generate_invoice">فاتورة</span></button>
+          </div>
+        </div>
+        <div class="panel-body no-pad"><div class="table-wrap"><table>
+          <thead><tr><th>#</th><th data-i18n="type">النوع</th><th data-i18n="client">العميل</th><th data-i18n="amount">المبلغ</th><th data-i18n="date">التاريخ</th><th data-i18n="status">الحالة</th><th data-i18n="actions">إجراءات</th></tr></thead>
+          <tbody id="invoicesBody"></tbody>
+        </table></div></div></div>
+      </section>
+
+      <section class="view" id="view-permissions">
+        <div class="panel"><div class="panel-header">
+          <div class="panel-title" data-i18n="page_permissions">صلاحيات الأدوار</div>
+          <button class="btn btn-primary btn-sm" onclick="savePermissions()" data-i18n="save">حفظ</button>
+        </div>
+        <div class="panel-body">
+          <div class="form-group mb-3"><label data-i18n="role">الدور</label>
+            <select class="form-control" id="permRole" onchange="loadPermissionsUI()">
+              <option value="manager">manager</option>
+              <option value="developer">developer</option>
+              <option value="designer">designer</option>
+              <option value="marketing">marketing</option>
+              <option value="support">support</option>
+              <option value="automation">automation</option>
+            </select>
+          </div>
+          <div id="permChecks" class="form-grid"></div>
+        </div></div>
+      </section>
+
+      <section class="view" id="view-settings">
+        <div class="settings-tabs">
+          <button class="active" data-tab="general" onclick="showSettingsTab('general')" data-i18n="general">عام</button>
+          <button data-tab="contact" onclick="showSettingsTab('contact')" data-i18n="contact_info">التواصل</button>
+          <button data-tab="branding" onclick="showSettingsTab('branding')" data-i18n="branding">الهوية</button>
+          <button data-tab="seo" onclick="showSettingsTab('seo')" data-i18n="seo">SEO</button>
+          <button data-tab="tracking" onclick="showSettingsTab('tracking');renderTrackingLinks()">روابط المتابعة</button>
+          <button data-tab="integrations" onclick="showSettingsTab('integrations')" data-i18n="integrations">تكاملات</button>
+          <button data-tab="notif" onclick="showSettingsTab('notif')" data-i18n="notifications">الإشعارات</button>
+          <button data-tab="security" onclick="showSettingsTab('security')" data-i18n="security">الأمان</button>
+          <button data-tab="legal" onclick="showSettingsTab('legal')" data-i18n="cms_legal">قانوني</button>
+          <button data-tab="data" onclick="showSettingsTab('data')" data-i18n="data_backup">البيانات</button>
+        </div>
+        <div class="settings-panel active" id="settings-general">
+          <div class="panel"><div class="panel-header"><div class="panel-title" data-i18n="company_info">معلومات الشركة</div></div>
+          <div class="panel-body">
+            <div class="form-grid">
+              <div class="form-group"><label data-i18n="company_name">اسم الشركة</label><input class="form-control" id="set_company"></div>
+              <div class="form-group"><label data-i18n="website">الموقع</label><input class="form-control" id="set_website"></div>
+              <div class="form-group"><label data-i18n="currency_symbol">رمز العملة</label><input class="form-control" id="set_currency"></div>
+              <div class="form-group"><label data-i18n="invoice_prefix">بادئة الفواتير</label><input class="form-control" id="set_invoice"></div>
+              <div class="form-group"><label data-i18n="tax_id">الرقم الضريبي</label><input class="form-control" id="set_tax"></div>
+              <div class="form-group"><label data-i18n="timezone">المنطقة الزمنية</label><input class="form-control" id="set_timezone"></div>
+              <div class="form-group full"><label data-i18n="working_hours">ساعات العمل</label><input class="form-control" id="set_hours"></div>
+            </div>
+            <div class="mt-3"><button class="btn btn-primary" onclick="saveSettings()" data-i18n="save_settings">حفظ</button></div>
+          </div></div>
+        </div>
+        <div class="settings-panel" id="settings-contact">
+          <div class="panel"><div class="panel-header"><div class="panel-title" data-i18n="contact_info">معلومات التواصل</div></div>
+          <div class="panel-body">
+            <div class="form-grid">
+              <div class="form-group"><label data-i18n="email">البريد</label><input class="form-control" id="set_email"></div>
+              <div class="form-group"><label data-i18n="phone">الهاتف</label><input class="form-control" id="set_phone"></div>
+              <div class="form-group"><label data-i18n="whatsapp">واتساب</label><input class="form-control" id="set_whatsapp"></div>
+              <div class="form-group"><label data-i18n="location">الموقع الجغرافي</label><input class="form-control" id="set_location"></div>
+            </div>
+            <div class="mt-3"><button class="btn btn-primary" onclick="saveSettings()" data-i18n="save_settings">حفظ</button></div>
+          </div></div>
+        </div>
+        <div class="settings-panel" id="settings-branding">
+          <div class="panel"><div class="panel-header"><div class="panel-title" data-i18n="branding">الهوية البصرية</div></div>
+          <div class="panel-body">
+            <div class="form-grid">
+              <div class="form-group"><label data-i18n="logo_url">رابط الشعار</label><input class="form-control" id="set_logo" placeholder="https://..."></div>
+              <div class="form-group"><label data-i18n="favicon_url">رابط الأيقونة</label><input class="form-control" id="set_favicon" placeholder="https://..."></div>
+              <div class="form-group"><label data-i18n="primary_color">اللون الأساسي</label><input class="form-control" id="set_primary" type="color" value="#00d4ff" style="height:44px;padding:4px"></div>
+              <div class="form-group"><label data-i18n="secondary_color">اللون الثانوي</label><input class="form-control" id="set_secondary" type="color" value="#f97316" style="height:44px;padding:4px"></div>
+              <div class="form-group"><label>Facebook</label><input class="form-control" id="set_fb"></div>
+              <div class="form-group"><label>Instagram</label><input class="form-control" id="set_ig"></div>
+              <div class="form-group"><label>LinkedIn</label><input class="form-control" id="set_li"></div>
+              <div class="form-group"><label>Twitter / X</label><input class="form-control" id="set_tw"></div>
+            </div>
+            <div class="mt-3"><button class="btn btn-primary" onclick="saveSettings()" data-i18n="save_settings">حفظ</button></div>
+          </div></div>
+        </div>
+                <div class="settings-panel" id="settings-seo">
+          <div class="panel"><div class="panel-header"><div class="panel-title" data-i18n="seo">تحسين محركات البحث</div></div>
+          <div class="panel-body">
+            <div class="form-grid full">
+              <div class="form-group"><label data-i18n="seo_title">عنوان الموقع (SEO)</label><input class="form-control" id="set_seo_title" placeholder="AutoDev Agency | تطوير مواقع وتطبيقات"></div>
+              <div class="form-group"><label data-i18n="seo_description">وصف الموقع (SEO)</label><textarea class="form-control" id="set_seo_desc" rows="3" placeholder="وكالة برمجيات في تيزي وزو..."></textarea></div>
+              <div class="form-group"><label data-i18n="seo_keywords">كلمات مفتاحية</label><input class="form-control" id="set_seo_kw" placeholder="تطوير مواقع, تطبيقات, الجزائر"></div>
+              <div class="form-group"><label>Canonical URL</label><input class="form-control" id="set_seo_canonical" placeholder="https://autodev.agency/"></div>
+              <div class="form-group"><label>og:image</label><input class="form-control" id="set_seo_og_image" placeholder="assets/preview.png"></div>
+              <div class="form-group"><label>robots</label>
+                <select class="form-control" id="set_seo_robots">
+                  <option value="index, follow">index, follow</option>
+                  <option value="noindex, nofollow">noindex, nofollow</option>
+                  <option value="index, nofollow">index, nofollow</option>
+                </select>
+              </div>
+              <div class="form-group full"><label>نص Sitemap / ملاحظات SEO</label>
+                <textarea class="form-control" id="set_seo_notes" rows="2" placeholder="ملفات robots.txt و sitemap.xml موجودة في جذر الموقع"></textarea>
+              </div>
+            </div>
+            <p class="text-muted" style="font-size:.85rem;margin:12px 0">الملفات الثابتة: <code>robots.txt</code> و <code>sitemap.xml</code> في جذر الموقع. بعد الحفظ تُنشر إعدادات SEO للموقع (LocalStorage) حتى الربط بالخادم.</p>
+            <div class="mt-3"><button class="btn btn-primary" onclick="saveSettings()" data-i18n="save_settings">حفظ</button></div>
+          </div></div>
+        </div>
+
+        
+        
+        <div class="settings-panel" id="settings-tracking">
+          <div class="panel">
+            <div class="panel-header flex-between">
+              <div class="panel-title">روابط متابعة المشاريع للعملاء</div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <button type="button" class="btn btn-outline btn-sm" onclick="generateAllTrackLinks()">توليد لكل المشاريع</button>
+                <button type="button" class="btn btn-primary btn-sm" onclick="renderTrackingLinks()">تحديث القائمة</button>
+              </div>
+            </div>
+            <div class="panel-body">
+              <p class="text-muted" style="margin-bottom:14px;font-size:.9rem">
+                لكل مشروع رابط خاص: <code>track.html?t=رمز</code> — يمكن توليد رابط جديد في أي وقت (الرابط القديم يتوقف).
+              </p>
+              <div class="table-wrap">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>المشروع</th>
+                      <th>الحالة</th>
+                      <th>التقدم</th>
+                      <th>المتابعة</th>
+                      <th>الرابط</th>
+                      <th>إجراءات</th>
+                    </tr>
+                  </thead>
+                  <tbody id="trackingLinksBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-panel" id="settings-integrations">
+          <div class="panel"><div class="panel-header"><div class="panel-title" data-i18n="integrations">التكاملات</div></div>
+          <div class="panel-body">
+            <div class="form-grid">
+              <div class="form-group"><label data-i18n="google_analytics">Google Analytics ID</label><input class="form-control" id="set_ga" placeholder="G-XXXXXXXX"></div>
+              <div class="form-group"><label data-i18n="facebook_pixel">Facebook Pixel ID</label><input class="form-control" id="set_pixel" placeholder="123456789"></div>
+              <div class="form-group"><label data-i18n="smtp_host">خادم SMTP</label><input class="form-control" id="set_smtp_host" placeholder="smtp.gmail.com"></div>
+              <div class="form-group"><label data-i18n="smtp_port">منفذ SMTP</label><input class="form-control" id="set_smtp_port" placeholder="587"></div>
+              <div class="form-group"><label data-i18n="smtp_user">مستخدم SMTP</label><input class="form-control" id="set_smtp_user"></div>
+              <div class="form-group"><label data-i18n="smtp_pass">كلمة مرور SMTP</label><input class="form-control" id="set_smtp_pass" type="password"></div>
+              <div class="form-group full"><label data-i18n="email_from">البريد المرسل</label><input class="form-control" id="set_email_from" placeholder="noreply@autodev.agency"></div>
+            </div>
+            <div class="mt-3"><button class="btn btn-primary" onclick="saveSettings()" data-i18n="save_settings">حفظ</button></div>
+          </div></div>
+        </div>
+        <div class="settings-panel" id="settings-notif">
+          <div class="panel"><div class="panel-header"><div class="panel-title" data-i18n="notifications">الإشعارات</div></div>
+          <div class="panel-body">
+            <div class="flex-between mb-2" style="padding:12px 0;border-bottom:1px solid var(--border)">
+              <span data-i18n="email_notif">إشعارات الطلبات بالبريد</span>
+              <label class="switch"><input type="checkbox" id="set_notif_req" checked><span class="slider"></span></label>
+            </div>
+            <div class="flex-between mb-2" style="padding:12px 0;border-bottom:1px solid var(--border)">
+              <span data-i18n="stat_messages">إشعارات الرسائل بالبريد</span>
+              <label class="switch"><input type="checkbox" id="set_notif_msg" checked><span class="slider"></span></label>
+            </div>
+            <div class="flex-between mb-2" style="padding:12px 0;border-bottom:1px solid var(--border)">
+              <span data-i18n="whatsapp_notify">إشعارات واتساب</span>
+              <label class="switch"><input type="checkbox" id="set_notif_wa"><span class="slider"></span></label>
+            </div>
+            <div class="flex-between mb-2" style="padding:12px 0;border-bottom:1px solid var(--border)">
+              <span data-i18n="contract_alerts">تنبيهات العقود</span>
+              <label class="switch"><input type="checkbox" id="set_notif_contract" checked><span class="slider"></span></label>
+            </div>
+            <div class="flex-between" style="padding:12px 0">
+              <span data-i18n="low_budget_alert">تنبيه انخفاض الميزانية</span>
+              <label class="switch"><input type="checkbox" id="set_notif_budget" checked><span class="slider"></span></label>
+            </div>
+            <div class="mt-3"><button class="btn btn-primary" onclick="saveSettings()" data-i18n="save_settings">حفظ</button></div>
+          </div></div>
+        </div>
+        <div class="settings-panel" id="settings-security">
+          <div class="panel"><div class="panel-header"><div class="panel-title" data-i18n="security">الأمان</div></div>
+          <div class="panel-body">
+            <div class="form-grid">
+              <div class="form-group"><label data-i18n="session_timeout">انتهاء الجلسة (دقيقة)</label><input class="form-control" id="set_session" type="number" value="60"></div>
+              <div class="form-group"><label data-i18n="items_per_page">عناصر لكل صفحة</label><input class="form-control" id="set_perpage" type="number" value="20"></div>
+              <div class="form-group"><label data-i18n="date_format">صيغة التاريخ</label>
+                <select class="form-control" id="set_datefmt">
+                  <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+                  <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                  <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                </select>
+              </div>
+              <div class="form-group"><label data-i18n="default_currency">العملة الافتراضية</label>
+                <select class="form-control" id="set_defcur">
+                  <option value="DZD">DZD</option>
+                  <option value="EUR">EUR</option>
+                  <option value="USD">USD</option>
+                </select>
+              </div>
+            </div>
+            <div class="flex-between mt-2" style="padding:12px 0;border-bottom:1px solid var(--border)">
+              <span data-i18n="two_factor">المصادقة الثنائية</span>
+              <label class="switch"><input type="checkbox" id="set_2fa"><span class="slider"></span></label>
+            </div>
+            <div class="flex-between mb-2" style="padding:12px 0;border-bottom:1px solid var(--border)">
+              <span data-i18n="maintenance_mode">وضع الصيانة</span>
+              <label class="switch"><input type="checkbox" id="set_maintenance"><span class="slider"></span></label>
+            </div>
+            <div class="flex-between" style="padding:12px 0">
+              <span data-i18n="auto_backup">نسخ احتياطي تلقائي</span>
+              <label class="switch"><input type="checkbox" id="set_autobackup" checked><span class="slider"></span></label>
+            </div>
+            <div class="mt-3"><button class="btn btn-primary" onclick="saveSettings()" data-i18n="save_settings">حفظ</button></div>
+          </div></div>
+        </div>
+        
+        <div class="settings-panel" id="settings-legal">
+          <div class="panel"><div class="panel-header"><div class="panel-title" data-i18n="cms_legal">الشروط والخصوصية</div></div>
+          <div class="panel-body">
+            <p class="text-sec mb-3" style="font-size:.85rem">تحكم كامل في نصوص <strong>الشروط والأحكام</strong> و<strong>سياسة الخصوصية</strong> و<strong>الكوكيز</strong> التي تظهر في الموقع الرئيسي. اكتب العناوين كأسطر قصيرة والنصوص كفقرات — يُعرض المحتوى بنفس أسلوب أقسام الموقع.</p>
+            <div class="form-grid full">
+              <div class="form-group"><label>الشروط والأحكام (AR)</label><textarea class="form-control" id="set_terms_ar" rows="5"></textarea></div>
+              <div class="form-group"><label>Conditions (FR)</label><textarea class="form-control" id="set_terms_fr" rows="5"></textarea></div>
+              <div class="form-group"><label>Terms (EN)</label><textarea class="form-control" id="set_terms_en" rows="5"></textarea></div>
+              <div class="form-group"><label>سياسة الخصوصية (AR)</label><textarea class="form-control" id="set_privacy_ar" rows="5"></textarea></div>
+              <div class="form-group"><label>Confidentialité (FR)</label><textarea class="form-control" id="set_privacy_fr" rows="5"></textarea></div>
+              <div class="form-group"><label>Privacy (EN)</label><textarea class="form-control" id="set_privacy_en" rows="5"></textarea></div>
+              <div class="form-group"><label>الكوكيز (AR)</label><textarea class="form-control" id="set_cookies_ar" rows="3"></textarea></div>
+              <div class="form-group"><label>Cookies (FR)</label><textarea class="form-control" id="set_cookies_fr" rows="3"></textarea></div>
+              <div class="form-group"><label>Cookies (EN)</label><textarea class="form-control" id="set_cookies_en" rows="3"></textarea></div>
+            </div>
+            <div class="mt-3"><button class="btn btn-primary" onclick="saveSettingsLegal()" data-i18n="save">حفظ</button></div>
+          </div></div>
+        </div>
+
+        <div class="settings-panel" id="settings-data">
+          <div class="panel"><div class="panel-header"><div class="panel-title" data-i18n="data_backup">البيانات والنسخ الاحتياطي</div></div>
+          <div class="panel-body">
+            <p class="text-sec mb-2" style="font-size:.9rem" data-i18n="backend_note">للمطورين — ربط Backend لاحقاً</p>
+            <p class="text-muted mb-3" style="font-size:.85rem" data-i18n="backend_steps">غيّر فقط دوال api.js — الواجهة جاهزة</p>
+            <div style="display:flex;flex-direction:column;gap:12px;max-width:360px">
+              <button class="btn btn-outline" onclick="exportData()" data-i18n="export_json">تصدير كل البيانات (JSON)</button>
+              <button class="btn btn-danger" onclick="resetData()" data-i18n="reset_data">إعادة تعيين البيانات التجريبية</button>
+            </div>
+          </div></div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modal">
+    <div class="modal-header"><h3 id="modalTitle">—</h3>
+      <button class="modal-close" id="modalClose"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-footer" id="modalFooter"></div>
+  </div>
+</div>
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>window.SUPABASE_URL = "https://nuogzbgsxmtbcuwfglwg.supabase.co"; window.SUPABASE_PUBLISHABLE_KEY = "sb_publishable_bu5SFuqs_jlnhJzcG8MbBg_eMQcsjF1"; window.supabaseClient = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_PUBLISHABLE_KEY);</script>
+<script src="js/i18n.js"></script>
+<script src="js/api.js"></script>
+<script src="js/app.js"></script>
+<script src="js/extra-features.js"></script>
+</body>
+</html>

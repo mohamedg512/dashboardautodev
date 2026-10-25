@@ -1,0 +1,23 @@
+إنشاء حساب الموظف تلقائيًا من الداشبورد
+
+المطلوب مرة واحدة:
+1) ارفع مجلد dashboard إلى مستودع المشروع/الاستضافة كما تفعل عادة.
+2) ثبّت Supabase CLI ثم سجّل الدخول واربط المشروع:
+   supabase login
+   supabase link --project-ref nuogzbgsxmtbcuwfglwg
+3) انشر الدالة:
+   supabase functions deploy create-employee
+4) اضبط أسرار الدالة على الخادم (لا تضع المفتاح السري في index.html أو أي ملف JavaScript):
+   supabase secrets set SUPABASE_URL=https://nuogzbgsxmtbcuwfglwg.supabase.co
+   supabase secrets set SUPABASE_ANON_KEY=YOUR_PUBLISHABLE_KEY
+   supabase secrets set SUPABASE_SERVICE_ROLE_KEY=YOUR_SECRET_KEY
+   استبدل القيم بالقيم الحالية من إعدادات مشروعك. SECRET/SERVICE ROLE KEY يبقى على الخادم فقط.
+5) في Supabase > Authentication > Users أنشئ حساب المدير الأول يدويًا مرة واحدة.
+6) في قسم الفريق بالداشبورد، اربط حساب المدير بالبريد نفسه واختر role = manager واجعل حالته active. بعد ذلك يستطيع المدير إنشاء حسابات الموظفين من الداشبورد.
+7) افتح قسم الفريق > إضافة موظف، أدخل الاسم والبريد وكلمة المرور والدور وبقية المعلومات ثم احفظ. تنشئ الدالة حساب Auth وصف الموظف في جدول team في العملية نفسها. كلمة المرور لا تُحفظ في جدول team.
+
+الأمان:
+- الدالة تتحقق من جلسة المستخدم ومن وجود موظف نشط بدور manager قبل إنشاء الحساب.
+- لا تشارك SUPABASE_SERVICE_ROLE_KEY أو sb_secret داخل المتصفح أو المستودع العام.
+- تأكد من تطبيق RLS وسياسات تحقق من الأدوار على جداول البيانات قبل الإنتاج؛ إخفاء الأقسام في الواجهة وحده ليس حماية للبيانات.
+- هذا الإصدار يؤكد البريد تلقائيًا عند الإنشاء (email_confirm: true)، لذلك يستطيع الموظف تسجيل الدخول مباشرة بكلمة المرور التي يحددها المدير.
