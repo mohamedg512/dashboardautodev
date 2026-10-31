@@ -9,8 +9,10 @@ const I18N = {
     login_email: "البريد الإلكتروني",
     login_password: "كلمة المرور",
     login_btn: "دخول",
-    login_demo: "بيانات تجريبية",
-    login_error: "بيانات الدخول غير صحيحة",
+    login_demo: "دخول الموظفين",
+    login_employee_title: "دخول الموظفين",
+    login_employee_help: "يجب إنشاء الحساب في Supabase Auth وربط البريد نفسه بموظف نشط في قسم الفريق.",
+    login_error: "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
     logout: "تسجيل الخروج",
 
     // Nav
@@ -382,11 +384,13 @@ const I18N = {
   fr: {
     login_title: "Connexion",
     login_subtitle: "Tableau de bord AutoDev Agency",
-    login_email: "E-mail",
+    login_email: "Adresse e-mail",
     login_password: "Mot de passe",
     login_btn: "Se connecter",
-    login_demo: "Identifiants de démo",
-    login_error: "Identifiants incorrects",
+    login_demo: "Accès employés",
+    login_employee_title: "Accès employés",
+    login_employee_help: "Créez le compte dans Supabase Auth et associez la même adresse e-mail à un employé actif dans l’équipe.",
+    login_error: "Adresse e-mail ou mot de passe incorrect.",
     logout: "Déconnexion",
 
     nav_overview: "Vue d'ensemble",
@@ -741,6 +745,15 @@ const I18N = {
   },
 
   en: {
+    login_title: "Sign in",
+    login_subtitle: "AutoDev Agency Dashboard",
+    login_email: "Email address",
+    login_password: "Password",
+    login_btn: "Sign in",
+    login_demo: "Employee access",
+    login_employee_title: "Employee access",
+    login_employee_help: "Create the account in Supabase Auth and link the same email address to an active employee in the Team section.",
+    login_error: "Incorrect email address or password.",
     nav_overview: "Overview", nav_requests: "Requests", nav_clients: "Clients", nav_projects: "Projects",
     nav_tasks: "Tasks", nav_messages: "Messages", nav_partners: "Partners", nav_contracts: "Contracts",
     nav_automations: "Automations", nav_ads: "Ads", nav_services: "Services", nav_team: "Employees",
@@ -789,6 +802,7 @@ function setLang(lang) {
   document.documentElement.lang = lang;
   document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
   applyI18n();
+  document.querySelectorAll(".login-lang button").forEach((btn) => btn.classList.toggle("active", btn.dataset.lang === lang));
 }
 
 function applyI18n() {

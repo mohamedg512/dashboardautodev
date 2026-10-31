@@ -1013,7 +1013,14 @@ const API = {
       const value = await fetchSingleton(collection);
       return collection === "settings" ? [value] : collection === "site_content" ? [value] : [value];
     }
-    return unwrap(await db().from(collection).select("*").order("created_at", {ascending:false, nullsFirst:false}));
+    const rows = unwrap(await db().from(collection).select("*"));
+    // Some CMS collections do not define created_at; ordering in Postgres would make
+    // the entire section fail to load. Sort only when timestamps are present.
+    return (rows || []).sort((a, b) => {
+      const at = a.created_at ? Date.parse(a.created_at) : 0;
+      const bt = b.created_at ? Date.parse(b.created_at) : 0;
+      return bt - at;
+    });
   },
   async get(collection, id) {
     assertTable(collection);
@@ -1028,7 +1035,9 @@ const API = {
   async update(collection, id, payload) {
     assertTable(collection);
     if (SINGLETONS[collection]) return saveSingleton(collection, payload);
-    return unwrap(await db().from(collection).update({...payload, updated_at:new Date().toISOString()}).eq("id", id).select().single());
+    // Do not force updated_at: several existing CMS tables (partners, services,
+    // testimonials, FAQs and automations) may not have that column.
+    return unwrap(await db().from(collection).update(payload).eq("id", id).select().single());
   },
   async remove(collection, id) {
     assertTable(collection);

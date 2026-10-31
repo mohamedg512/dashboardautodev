@@ -302,6 +302,9 @@
         <div class="form-group"><label>Name AR</label><input class="form-control" id="ts_n_ar" value="${esc(x.name?.ar || "")}"></div>
         <div class="form-group"><label>Name FR</label><input class="form-control" id="ts_n_fr" value="${esc(x.name?.fr || "")}"></div>
         <div class="form-group"><label>Name EN</label><input class="form-control" id="ts_n_en" value="${esc(x.name?.en || "")}"></div>
+        <div class="form-group"><label>Role AR</label><input class="form-control" id="ts_r_ar" value="${esc(x.role?.ar || "")}"></div>
+        <div class="form-group"><label>Role FR</label><input class="form-control" id="ts_r_fr" value="${esc(x.role?.fr || "")}"></div>
+        <div class="form-group"><label>Role EN</label><input class="form-control" id="ts_r_en" value="${esc(x.role?.en || "")}"></div>
         <div class="form-group full"><label>Content AR</label><textarea class="form-control" id="ts_c_ar">${esc(x.content?.ar || "")}</textarea></div>
         <div class="form-group full"><label>Content FR</label><textarea class="form-control" id="ts_c_fr">${esc(x.content?.fr || "")}</textarea></div>
         <div class="form-group full"><label>Content EN</label><textarea class="form-control" id="ts_c_en">${esc(x.content?.en || "")}</textarea></div>
@@ -317,6 +320,7 @@
     $("#modalSaveBtn").onclick = async () => {
       const payload = {
         name: { ar: $("#ts_n_ar").value.trim(), fr: $("#ts_n_fr").value.trim(), en: $("#ts_n_en").value.trim() },
+        role: { ar: $("#ts_r_ar").value.trim(), fr: $("#ts_r_fr").value.trim(), en: $("#ts_r_en").value.trim() },
         content: { ar: $("#ts_c_ar").value.trim(), fr: $("#ts_c_fr").value.trim(), en: $("#ts_c_en").value.trim() },
         rating: Number($("#ts_rating").value) || 5,
         avatar: $("#ts_avatar").value,
@@ -419,6 +423,7 @@
         <div class="form-group full"><label>A AR</label><textarea class="form-control" id="fq_a_ar">${esc(x.answer?.ar || "")}</textarea></div>
         <div class="form-group full"><label>A FR</label><textarea class="form-control" id="fq_a_fr">${esc(x.answer?.fr || "")}</textarea></div>
         <div class="form-group full"><label>A EN</label><textarea class="form-control" id="fq_a_en">${esc(x.answer?.en || "")}</textarea></div>
+        <div class="form-group"><label>Sort order</label><input type="number" class="form-control" id="fq_sort" value="${Number(x.sort_order)||0}"></div>
         <div class="form-group" style="padding-top:18px"><label><input type="checkbox" id="fq_vis" ${x.is_visible !== false ? "checked" : ""}> Visible</label></div>
       </div>
     `, null, "wide");
@@ -427,6 +432,7 @@
         question: { ar: $("#fq_q_ar").value.trim(), fr: $("#fq_q_fr").value.trim(), en: $("#fq_q_en").value.trim() },
         answer: { ar: $("#fq_a_ar").value.trim(), fr: $("#fq_a_fr").value.trim(), en: $("#fq_a_en").value.trim() },
         is_visible: $("#fq_vis").checked,
+        sort_order: Number($("#fq_sort").value) || 0,
       };
       if (id) await API.update("faq_items", id, payload);
       else await API.create("faq_items", payload);

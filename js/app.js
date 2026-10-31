@@ -1215,8 +1215,11 @@ window.editService = async function (id) {
   openModal(id?t("edit_service"):t("add_service"), `
     <div class="form-grid">
       <div class="form-group"><label>${t("title")} (AR) *</label><input class="form-control" id="f_title_ar" value="${esc(s.title?.ar||"")}"></div>
+      <div class="form-group"><label>${t("title")} (FR)</label><input class="form-control" id="f_title_fr" value="${esc(s.title?.fr||"")}"></div>
       <div class="form-group"><label>${t("title")} (EN)</label><input class="form-control" id="f_title_en" value="${esc(s.title?.en||"")}"></div>
-      <div class="form-group full"><label>${t("description")}</label><textarea class="form-control" id="f_desc_ar">${esc(s.short_description?.ar||"")}</textarea></div>
+      <div class="form-group full"><label>${t("description")} (AR)</label><textarea class="form-control" id="f_desc_ar">${esc(s.short_description?.ar||"")}</textarea></div>
+      <div class="form-group full"><label>${t("description")} (FR)</label><textarea class="form-control" id="f_desc_fr">${esc(s.short_description?.fr||"")}</textarea></div>
+      <div class="form-group full"><label>${t("description")} (EN)</label><textarea class="form-control" id="f_desc_en">${esc(s.short_description?.en||"")}</textarea></div>
       <div class="form-group"><label>${t("slug")}</label><input class="form-control" id="f_slug" value="${esc(s.slug||"")}"></div>
       <div class="form-group"><label>${t("sort_order")}</label><input class="form-control" id="f_order" type="number" value="${s.sort_order||0}"></div>
       <div class="form-group" style="padding-top:18px"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" id="f_visible" ${s.is_visible!==false?"checked":""}> ${t("visible")}</label></div>
@@ -1225,7 +1228,7 @@ window.editService = async function (id) {
   $("#modalSaveBtn").onclick = async () => {
     const titleAr = $("#f_title_ar").value.trim();
     if (!titleAr) { toast(t("required"),"error"); return; }
-    const payload = { title:{ar:titleAr,en:$("#f_title_en").value.trim()||titleAr,fr:s.title?.fr||titleAr}, short_description:{ar:$("#f_desc_ar").value.trim(),en:s.short_description?.en||"",fr:s.short_description?.fr||""}, slug:$("#f_slug").value.trim(), sort_order:Number($("#f_order").value)||0, is_visible:$("#f_visible").checked, icon:s.icon||"" };
+    const payload = { title:{ar:titleAr,en:$("#f_title_en").value.trim()||titleAr,fr:$("#f_title_fr").value.trim()||titleAr}, short_description:{ar:$("#f_desc_ar").value.trim(),en:$("#f_desc_en").value.trim(),fr:$("#f_desc_fr").value.trim()}, slug:$("#f_slug").value.trim(), sort_order:Number($("#f_order").value)||0, is_visible:$("#f_visible").checked, icon:s.icon||"" };
     if (id) await API.update("services", id, payload); else await API.create("services", payload);
     closeModal(); toast(t("saved")); views.services();
   };
